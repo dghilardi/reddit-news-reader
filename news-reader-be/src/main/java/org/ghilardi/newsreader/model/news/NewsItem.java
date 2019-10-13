@@ -8,6 +8,7 @@ import java.time.OffsetDateTime;
 @Data
 @Builder
 public class NewsItem {
+    private final String id;
     private final String author;
     private final String authorFullname;
     private final String title;

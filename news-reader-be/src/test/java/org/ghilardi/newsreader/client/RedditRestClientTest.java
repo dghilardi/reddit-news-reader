@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -41,7 +42,7 @@ public class RedditRestClientTest {
         when(mockedRestClient.exchange(
                 eq(serviceUrl),
                 eq(HttpMethod.GET),
-                eq(null),
+                any(),
                 eq(new ParameterizedTypeReference<RedditBaseDto.RedditListingDto<RedditBaseDto.RedditNewsDto>>() { })
         ))
                 .thenReturn(responseFromResource(responseResourcePath));
