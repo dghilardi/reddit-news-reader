@@ -1,3 +1,7 @@
+spring:
+  main:
+    web-application-type: NONE
+
 
 reddit:
   url: https://www.reddit.com
