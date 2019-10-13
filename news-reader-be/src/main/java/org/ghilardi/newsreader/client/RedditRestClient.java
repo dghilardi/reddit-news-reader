@@ -1,17 +1,17 @@
 package org.ghilardi.newsreader.client;
 
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.ghilardi.newsreader.exception.NewsReaderError;
 import org.ghilardi.newsreader.exception.NewsReaderExceptionBuilder;
 import org.ghilardi.newsreader.factory.NewsFactory;
 import org.ghilardi.newsreader.model.conf.RedditRestClientConf;
 import org.ghilardi.newsreader.model.dto.reddit.core.RedditBaseDto;
-import org.ghilardi.newsreader.model.dto.reddit.news.RedditNewsDataDto;
 import org.ghilardi.newsreader.model.news.NewsItem;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
@@ -33,12 +33,11 @@ public class RedditRestClient implements NewsClient {
     @Override
     public List<NewsItem> fetchTopNews() {
         final String url = conf.getUrl() + URL_TODAY_I_LEARNED_TOP;
-        ObjectMapper om = new ObjectMapper();
-        JavaType responseType = om.getTypeFactory().constructParametricType(RedditBaseDto.RedditListingDto.class, RedditBaseDto.RedditNewsDto.class);
+        HttpEntity<Void> request = buildRequest(null);
         RedditBaseDto.RedditListingDto<RedditBaseDto.RedditNewsDto> response = restClient.exchange(
                 url,
                 HttpMethod.GET,
-                null,
+                request,
                 new ParameterizedTypeReference<RedditBaseDto.RedditListingDto<RedditBaseDto.RedditNewsDto>>() { }
         ).getBody();
 
@@ -48,6 +47,18 @@ public class RedditRestClient implements NewsClient {
 
         return newsFactory.createNewsFromFetchTodayILearnedResponse(response);
     }
+
+    private <REQUEST_TYPE> HttpEntity<REQUEST_TYPE> buildRequest(REQUEST_TYPE body) {
+        MultiValueMap<String, String> headers = buildHeaders();
+        return new HttpEntity<>(body, headers);
+    }
+
+    private MultiValueMap<String, String> buildHeaders() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set(HttpHeaders.USER_AGENT, conf.getUserAgent());
+        return headers;
+    }
+
 
     private boolean isFetchTodayILearnedTopResponseValid(RedditBaseDto.RedditListingDto<RedditBaseDto.RedditNewsDto> response) {
         return response != null

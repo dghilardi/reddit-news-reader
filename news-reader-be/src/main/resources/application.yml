@@ -1,6 +1,7 @@
 
 reddit:
   url: https://www.reddit.com
+  user-agent: ${os.name}:org.ghilardi.newsreader:1.0.0 (by /u/dghila)
 
 news-format:
   header: "Today I Learned:"
