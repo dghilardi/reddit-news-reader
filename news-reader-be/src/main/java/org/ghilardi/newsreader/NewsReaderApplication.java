@@ -1,4 +1,4 @@
-package org.ghilardi.newsreader.newsreader;
+package org.ghilardi.newsreader;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
