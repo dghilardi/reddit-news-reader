@@ -1,3 +1,7 @@
 
 reddit:
   url: https://www.reddit.com
+
+news-format:
+  header: "Today I Learned:"
+  row-template: "* {{title}} - {{thumbnail}}"

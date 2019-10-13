@@ -1,5 +1,6 @@
 package org.ghilardi.newsreader.conf;
 
+import org.ghilardi.newsreader.model.conf.NewsFormatterConf;
 import org.ghilardi.newsreader.model.conf.RedditRestClientConf;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -18,5 +19,11 @@ public class NewsReaderConf {
     @ConfigurationProperties("reddit")
     public RedditRestClientConf redditRestClientConf() {
         return new RedditRestClientConf();
+    }
+
+    @Bean
+    @ConfigurationProperties("news-format")
+    public NewsFormatterConf newsFormatterConf() {
+        return new NewsFormatterConf();
     }
 }
