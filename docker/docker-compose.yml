@@ -1,0 +1,22 @@
+version: '2.2'
+services:
+  news-reader-be:
+    image: news-reader-be
+    hostname: news-reader-be
+    build: 
+      context: ../news-reader-be
+    depends_on:
+      - news-reader-db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://news-reader-db:5432/news-reader
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=2019NEWS
+      - SPRING_DATASOURCE_DRIVER_CLASS_NAME=org.postgresql.Driver
+  news-reader-db:
+    image: postgres:10.5
+    ports:
+      - "35432:5432"
+    environment:
+      - POSTGRES_PASSWORD=2019NEWS
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=news-reader

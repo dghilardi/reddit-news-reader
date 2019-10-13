@@ -1,0 +1,26 @@
+spring:
+  main:
+    web-application-type: NONE
+  application:
+    name: News Reader
+  datasource:
+    url: jdbc:h2:file:~/h2/news-reader
+    username: sa
+    password: sa
+    driver-class-name: org.h2.Driver
+    platform: h2
+
+
+reddit:
+  url: https://www.reddit.com
+  user-agent: ${os.name}:org.ghilardi.newsreader:1.0.0 (by /u/dghila)
+  max-age: 600
+  max-stale: 120
+  min-fresh: 60
+
+print-conf:
+  news-count: 15
+
+news-format:
+  header: "Today I Learned:"
+  row-template: "* {{title}} - {{thumbnail}}"

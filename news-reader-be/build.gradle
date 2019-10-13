@@ -1,18 +1,96 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:2.0.5.RELEASE")
+        classpath 'com.h2database:h2:1.4.188'
+        classpath 'nu.studer:gradle-jooq-plugin:+'
+    }
+}
+
 plugins {
-	id 'org.springframework.boot' version '2.1.9.RELEASE'
-	id 'io.spring.dependency-management' version '1.0.8.RELEASE'
-	id 'java'
+    id 'org.springframework.boot' version '2.1.9.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.8.RELEASE'
+    id 'nu.studer.jooq' version '3.0.3'
+    id 'org.flywaydb.flyway' version '5.2.4'
+    id 'java'
 }
 
 group = 'org.ghilardi.newsreader'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '1.8'
 
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
 repositories {
-	mavenCentral()
+    mavenCentral()
+    jcenter()
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    implementation 'org.springframework.boot:spring-boot-starter'
+    implementation 'org.springframework.boot:spring-boot-starter-json'
+    implementation 'com.github.spullara.mustache.java:compiler:0.9.4'
+
+    // Database
+    implementation 'org.springframework.boot:spring-boot-starter-jooq'
+    implementation 'org.flywaydb:flyway-core'
+    implementation 'com.h2database:h2'
+    implementation 'org.postgresql:postgresql'
+
+    jooqRuntime 'com.h2database:h2'
+
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
+
+jooq {
+    version = "3.11.7"
+    userDatabase(sourceSets.main) {
+        jdbc {
+            driver = 'org.h2.Driver'
+            url = 'jdbc:h2:file:~/h2/news-reader-build'
+            user = 'sa'
+            password = 'sa'
+        }
+        generator {
+            database {
+                inputSchema = 'public'
+                includes = '.*'
+                outputSchemaToDefault = true
+                outputCatalogToDefault = true
+                excludes = 'flyway_schema_history'
+            }
+            generate {
+                relations = true
+                deprecated = false
+                records = true
+                immutablePojos = false
+                fluentSetters = true
+                javaTimeTypes = true
+            }
+            target {
+                packageName = 'org.ghilardi.newsreader'
+                directory = 'src/main/generated/java'
+                clean = true
+            }
+        }
+    }
+}
+
+flyway {
+    url = 'jdbc:h2:file:~/h2/news-reader-build'
+    user = 'sa'
+    password = 'sa'
+    schemas = ['public']
+    locations = ["filesystem:$project.projectDir/src/main/resources/db/migration"]
+}
+
+generateUserDatabaseJooqSchemaSource.dependsOn flywayMigrate
+test.dependsOn flywayClean

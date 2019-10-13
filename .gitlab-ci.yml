@@ -1,0 +1,21 @@
+image: java:8-jdk
+
+stages:
+  - build
+  - test
+
+build:
+  stage: build
+  script:
+    - cd news-reader-be && ./gradlew assemble
+  artifacts:
+    paths:
+      - news-reader-be/build/libs/*.jar
+    expire_in: 1 week
+  only:
+    - master
+
+test:
+  stage: test
+  script:
+    - cd news-reader-be && ./gradlew check

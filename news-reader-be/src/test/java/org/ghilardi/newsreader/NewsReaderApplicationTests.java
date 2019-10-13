@@ -1,4 +1,4 @@
-package org.ghilardi.newsreader.newsreader;
+package org.ghilardi.newsreader;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
