@@ -15,6 +15,9 @@ reddit:
   url: https://www.reddit.com
   user-agent: ${os.name}:org.ghilardi.newsreader:1.0.0 (by /u/dghila)
 
+print-conf:
+  news-count: 15
+
 news-format:
   header: "Today I Learned:"
   row-template: "* {{title}} - {{thumbnail}}"
