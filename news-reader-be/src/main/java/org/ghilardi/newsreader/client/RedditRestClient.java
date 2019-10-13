@@ -14,7 +14,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class RedditRestClient implements NewsClient {
@@ -38,7 +41,8 @@ public class RedditRestClient implements NewsClient {
                 url,
                 HttpMethod.GET,
                 request,
-                new ParameterizedTypeReference<RedditBaseDto.RedditListingDto<RedditBaseDto.RedditNewsDto>>() { }
+                new ParameterizedTypeReference<RedditBaseDto.RedditListingDto<RedditBaseDto.RedditNewsDto>>() {
+                }
         ).getBody();
 
         if (!isFetchTodayILearnedTopResponseValid(response)) {
@@ -56,7 +60,20 @@ public class RedditRestClient implements NewsClient {
     private MultiValueMap<String, String> buildHeaders() {
         HttpHeaders headers = new HttpHeaders();
         headers.set(HttpHeaders.USER_AGENT, conf.getUserAgent());
+        headers.set(HttpHeaders.CACHE_CONTROL, buildCacheControlHeader());
         return headers;
+    }
+
+    private String buildCacheControlHeader() {
+        return Arrays.asList(
+                Optional.ofNullable(conf.getMaxAge()).map(val -> String.format("max-age=%d", val)),
+                Optional.ofNullable(conf.getMaxStale()).map(val -> String.format("max-stale=%d", val)),
+                Optional.ofNullable(conf.getMinFresh()).map(val -> String.format("min-fresh=%d", val))
+        )
+                .stream()
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.joining(", "));
     }
 
 

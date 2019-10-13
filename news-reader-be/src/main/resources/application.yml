@@ -14,6 +14,9 @@ spring:
 reddit:
   url: https://www.reddit.com
   user-agent: ${os.name}:org.ghilardi.newsreader:1.0.0 (by /u/dghila)
+  max-age: 600
+  max-stale: 120
+  min-fresh: 60
 
 print-conf:
   news-count: 15
